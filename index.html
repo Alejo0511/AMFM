@@ -3,46 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Sorpresa para Cristina! 🎁</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4b8 25%, #dcc9a3 50%, #d4bf8e 75%, #c9b47a 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Georgia', 'Garamond', serif;
-        }
-        
-        .loading {
-            text-align: center;
-        }
-        
-        .loading h1 {
-            color: #2c1810;
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-        
-        .loading p {
-            color: #4a3728;
-            font-size: 1.1rem;
-        }
-    </style>
+    <title>AL FM</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="loading">
-        <h1>✨ Cargando tu sorpresa... ✨</h1>
-        <p>Espera un momento...</p>
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-message">BIENVENIDO DEVUELTA</div>
     </div>
-    
-    <script>
-        // Redirigir a gift.html después de un breve delay
-        setTimeout(function() {
-            window.location.href = 'gift.html';
-        }, 500);
-    </script>
+
+    <div id="loginScreen" class="login-screen hidden">
+        <div class="login-card">
+            <h1>Registro</h1>
+            <label for="userSelect">Elige tu usuario</label>
+            <select id="userSelect">
+                <option value="alejandro">Alejandro</option>
+                <option value="felipe">Felipe</option>
+            </select>
+            <button id="loginBtn" class="btn-primary">Entrar</button>
+        </div>
+    </div>
+
+    <div id="nameBurst" class="name-burst hidden">Alejandro</div>
+
+    <div id="appScreen" class="app-screen hidden">
+        <header class="topbar">
+            <div class="container">
+                <h2>Panel de control</h2>
+                <span>Bienvenido, <strong id="userNameLabel">Alejandro</strong></span>
+            </div>
+        </header>
+
+        <div class="container" style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <button id="clearUserDataBtn" type="button" class="btn-clear small">Limpiar todo del usuario</button>
+            <button id="resetBalanceBtn" type="button" class="btn-secondary small">Borrar saldo y gastos</button>
+        </div>
+
+        <div id="dangerModal" class="danger-modal hidden" aria-modal="true" role="dialog">
+            <div class="danger-modal-card">
+                <div class="danger-icon">⚠️</div>
+                <h3>¡ADVERTENCIA!</h3>
+                <p class="danger-title">¿Ya anotaste los fiados?</p>
+                <div id="fiadoWarningList" class="fiado-warning-list"></div>
+                <div class="danger-actions">
+                    <button id="cancelUserClearBtn" type="button" class="btn-secondary small">Cancelar</button>
+                    <button id="confirmUserClearBtn" type="button" class="btn-clear small">Confirmar limpieza</button>
+                </div>
+            </div>
+        </div>
+
+        <main class="container dashboard">
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <p>Saldo actual</p>
+                    <h3 id="saldoActual">$0</h3>
+                </article>
+                <article class="stat-card">
+                    <p>Dinero gastado</p>
+                    <h3 id="dineroGastado">$0</h3>
+                </article>
+                <article class="stat-card highlight">
+                    <p>Base</p>
+                    <h3 id="dineroEsperado">$100.000</h3>
+                    <label for="baseConfirmSelect" class="base-label">¿Contamos con esos 100.000?</label>
+                    <select id="baseConfirmSelect" class="base-select">
+                        <option value="">Selecciona</option>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                    <p id="baseMoneyStatus" class="small-status">Aún no se confirmó.</p>
+                </article>
+            </section>
+
+            <section class="panel">
+                <h3>Factura</h3>
+                <div class="wizard" data-wizard="factura">
+                    <div class="wizard-step active" data-step="1">
+                        <div id="facturaRows" class="entry-list"></div>
+                        <div class="button-row">
+                            <button type="button" id="addFacturaRowBtn" class="btn-secondary small">Agregar otro producto</button>
+                            <button type="button" class="next-step btn-primary small">Siguiente</button>
+                        </div>
+                    </div>
+                    <div class="wizard-step" data-step="2">
+                        <div id="facturaSummaryRows" class="entry-list summary-list"></div>
+                        <div id="facturaFiadoRows" class="entry-list"></div>
+                        <div class="button-row">
+                            <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                            <button type="button" id="guardarFacturaBtn" class="btn-primary small">Guardar factura</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3>Ventas</h3>
+                <div class="wizard" data-wizard="venta">
+                    <div class="wizard-step active" data-step="1">
+                        <div id="ventaRows" class="entry-list"></div>
+                        <div class="button-row">
+                            <button type="button" id="addVentaRowBtn" class="btn-secondary small">Agregar otro producto</button>
+                            <button type="button" class="next-step btn-primary small">Siguiente</button>
+                        </div>
+                    </div>
+                    <div class="wizard-step" data-step="2">
+                        <div id="ventaSummaryRows" class="entry-list summary-list"></div>
+                        <div class="button-row">
+                            <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                            <button type="button" class="next-step btn-primary small">Siguiente</button>
+                        </div>
+                    </div>
+                    <div class="wizard-step" data-step="3">
+                        <div id="ventaFiadoRows" class="entry-list"></div>
+                        <div class="button-row">
+                            <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                            <button type="button" id="guardarVentaBtn" class="btn-primary small">Guardar venta</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3>Bóveda</h3>
+                <div class="button-row" style="margin-bottom: 12px;">
+                    <button type="button" id="addExtraBodegaBtn" class="btn-secondary small">Agregar producto extra</button>
+                    <button type="button" id="clearBodegaBtn" class="btn-clear small">Borrar productos de boveda</button>
+                </div>
+                <div id="bodegaResumen" class="bodega-box"></div>
+            </section>
+
+            <section class="panel">
+                <h3>Fiados</h3>
+                <ul id="fiadosList" class="fiados-list"></ul>
+            </section>
+
+            <section class="panel">
+                <h3>Promociones</h3>
+                <form id="promoForm" class="promo-form">
+                    <select id="promoProductSelect" class="promo-input"></select>
+                    <input id="promoQuantityInput" class="promo-input" type="number" min="1" value="1" placeholder="Cantidad a descontar">
+                    <button type="submit" class="btn-secondary small">Aplicar promoción</button>
+                </form>
+                <ul id="promotionsList" class="promotions-list"></ul>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
