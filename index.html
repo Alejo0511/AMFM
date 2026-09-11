@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL FM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-message">BIENVENIDO DEVUELTA</div>
+    </div>
+
+    <div id="loginScreen" class="login-screen hidden">
+        <div id="authNotification" class="auth-notification hidden" role="alert" aria-live="assertive">
+            <div class="auth-notification-icon">⚠️</div>
+            <div id="authNotificationText">Mensaje de alerta</div>
+        </div>
+
+        <div id="pedidoToast" class="pedido-toast hidden" role="alert" aria-live="assertive">
+            <div class="pedido-toast-icon">🔔</div>
+            <div>
+                <strong>Recordatorio de pedido</strong>
+                <p id="pedidoToastText">Mensaje de pedido</p>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <div class="auth-tabs">
+                <button type="button" id="loginTabBtn" class="auth-tab active">Iniciar sesión</button>
+                <button type="button" id="registerTabBtn" class="auth-tab">Registro</button>
+            </div>
+
+            <div id="loginFormBlock" class="auth-form-block">
+                <h1>Iniciar sesión</h1>
+                <label for="usernameLogin">Usuario</label>
+                <input id="usernameLogin" type="text" placeholder="Nombre de usuario">
+                <label for="passwordLogin">Contraseña</label>
+                <input id="passwordLogin" type="password" placeholder="Tu contraseña">
+                <button id="loginBtn" class="btn-primary">Entrar</button>
+            </div>
+
+            <div id="registerFormBlock" class="auth-form-block hidden">
+                <h1>Registro</h1>
+                <label for="registerUsername">Usuario</label>
+                <input id="registerUsername" type="text" placeholder="Nuevo usuario">
+                <label for="registerPassword">Contraseña</label>
+                <input id="registerPassword" type="password" placeholder="Crea una contraseña">
+                <label for="registerConfirmPassword">Confirmar contraseña</label>
+                <input id="registerConfirmPassword" type="password" placeholder="Repite la contraseña">
+                <button id="registerBtn" class="btn-secondary">Crear usuario</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="nameBurst" class="name-burst hidden">Alejandro</div>
+
+    <div id="appScreen" class="app-screen hidden">
+        <div id="mobileMenuBackdrop" class="mobile-menu-backdrop hidden"></div>
+        <aside class="sidebar">
+            <div class="brand">AL FM</div>
+
+            <nav class="sidebar-nav regular-nav">
+                <button type="button" class="nav-btn active" data-panel="resumen">Resumen</button>
+                <button type="button" class="nav-btn" data-panel="factura">Factura</button>
+                <button type="button" class="nav-btn" data-panel="venta">Ventas</button>
+                <button type="button" class="nav-btn" data-panel="bodega">Bóveda</button>
+                <button type="button" class="nav-btn" data-panel="fiados">Fiados</button>
+                <button type="button" class="nav-btn" data-panel="promociones">Promociones</button>
+                <button type="button" class="nav-btn" data-panel="pedidos">Pedidos</button>
+                <button type="button" id="adminPanelBtn" class="nav-btn admin-nav hidden" data-panel="admin">Administración</button>
+            </nav>
+
+            <nav class="sidebar-nav admin-nav hidden">
+                <button type="button" class="nav-btn active" data-admin-panel="usuarios">Total usuarios</button>
+                <button type="button" class="nav-btn" data-admin-panel="agregar">Añadir usuario</button>
+                <button type="button" class="nav-btn" data-admin-panel="editar">Editar usuario</button>
+                <button type="button" class="nav-btn" data-admin-panel="borrar">Eliminar usuario</button>
+                <button type="button" class="nav-btn" data-admin-panel="actividad">Actividad de usuarios</button>
+                <button type="button" id="logoutBtn" class="nav-btn logout-btn">Guardar y cerrar</button>
+            </nav>
+
+            <button type="button" id="logoutBtnRegular" class="nav-btn logout-btn regular-logout">Guardar y cerrar sesión</button>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="container topbar-inner">
+                    <div class="topbar-left">
+                        <button type="button" id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Abrir menú">☰</button>
+                        <div>
+                            <span class="eyebrow">Panel</span>
+                            <h2>Bienvenido, <strong id="userNameLabel">Alejandro</strong></h2>
+                        </div>
+                    </div>
+                    <div class="topbar-actions">
+                        <button id="themeToggleBtn" type="button" class="btn-secondary small summary-action-btn" aria-label="Cambiar tema">☀️</button>
+                        <button id="clearUserDataBtn" type="button" class="btn-clear small summary-action-btn">Limpiar todo del usuario</button>
+                        <button id="resetBalanceBtn" type="button" class="btn-secondary small summary-action-btn">Borrar saldo y gastos</button>
+                    </div>
+                </div>
+            </header>
+
+            <div id="dangerModal" class="danger-modal hidden" aria-modal="true" role="dialog">
+                <div class="danger-modal-card">
+                    <div class="danger-icon">⚠️</div>
+                    <h3>¡ADVERTENCIA!</h3>
+                    <p class="danger-title">¿Ya anotaste los fiados?</p>
+                    <div id="fiadoWarningList" class="fiado-warning-list"></div>
+                    <div class="danger-actions">
+                        <button id="cancelUserClearBtn" type="button" class="btn-secondary small">Cancelar</button>
+                        <button id="confirmUserClearBtn" type="button" class="btn-clear small">Confirmar limpieza</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bodegaActionModal" class="inventory-modal hidden" aria-modal="true" role="dialog">
+                <div class="inventory-modal-card">
+                    <div class="inventory-modal-header">
+                        <div class="inventory-modal-icon">📦</div>
+                        <div>
+                            <h3 id="inventoryModalTitle">Agregar producto</h3>
+                            <p id="inventoryModalSubtitle">Selecciona la cantidad y decide si se suma o no a gastos.</p>
+                        </div>
+                    </div>
+
+                    <div class="inventory-form-grid">
+                        <label>
+                            Producto
+                            <select id="inventoryProductSelect"></select>
+                        </label>
+                        <label>
+                            Cantidad
+                            <input id="inventoryQuantityInput" type="number" min="1" value="1">
+                        </label>
+                        <label>
+                            Precio unitario
+                            <input id="inventoryPriceInput" type="number" min="0" step="100" value="0">
+                        </label>
+                    </div>
+
+                    <div class="inventory-modal-actions">
+                        <button type="button" id="inventoryCancelBtn" class="btn-secondary small">Cancelar</button>
+                        <button type="button" id="inventoryNoBtn" class="btn-clear small">No</button>
+                        <button type="button" id="inventoryYesBtn" class="btn-primary small">Sí</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container dashboard">
+                <section id="panel-resumen" class="content-panel active">
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <p>Saldo actual</p>
+                            <h3 id="saldoActual">$0</h3>
+                        </article>
+                        <article class="stat-card">
+                            <p>Dinero gastado</p>
+                            <h3 id="dineroGastado">$0</h3>
+                        </article>
+                        <article class="stat-card highlight">
+                            <p>Base</p>
+                            <h3 id="dineroEsperado">$100.000</h3>
+                            <label for="baseConfirmSelect" class="base-label">¿Contamos con esos 100.000?</label>
+                            <select id="baseConfirmSelect" class="base-select">
+                                <option value="">Selecciona</option>
+                                <option value="si">Sí</option>
+                                <option value="no">No</option>
+                            </select>
+                            <p id="baseMoneyStatus" class="small-status">Aún no se confirmó.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="panel-factura" class="content-panel hidden">
+                    <div class="panel">
+                        <h3>Factura</h3>
+                        <div class="wizard" data-wizard="factura">
+                            <div class="wizard-step active" data-step="1">
+                                <div id="facturaRows" class="entry-list"></div>
+                                <div class="button-row">
+                                    <button type="button" id="addFacturaRowBtn" class="btn-secondary small">Agregar otro producto</button>
+                                    <button type="button" class="next-step btn-primary small">Siguiente</button>
+                                </div>
+                            </div>
+                            <div class="wizard-step" data-step="2">
+                                <div id="facturaSummaryRows" class="entry-list summary-list"></div>
+                                <div id="facturaFiadoRows" class="entry-list"></div>
+                                <div class="button-row">
+                                    <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                                    <button type="button" id="guardarFacturaBtn" class="btn-primary small">Guardar factura</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-venta" class="content-panel hidden">
+                    <div class="panel">
+                        <h3>Ventas</h3>
+                        <div class="wizard" data-wizard="venta">
+                            <div class="wizard-step active" data-step="1">
+                                <div id="ventaRows" class="entry-list"></div>
+                                <div class="button-row">
+                                    <button type="button" id="addVentaRowBtn" class="btn-secondary small">Agregar otro producto</button>
+                                    <button type="button" class="next-step btn-primary small">Siguiente</button>
+                                </div>
+                            </div>
+                            <div class="wizard-step" data-step="2">
+                                <div id="ventaSummaryRows" class="entry-list summary-list"></div>
+                                <div class="button-row">
+                                    <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                                    <button type="button" class="next-step btn-primary small">Siguiente</button>
+                                </div>
+                            </div>
+                            <div class="wizard-step" data-step="3">
+                                <div id="ventaFiadoRows" class="entry-list"></div>
+                                <div class="button-row">
+                                    <button type="button" class="prev-step btn-secondary small">Anterior</button>
+                                    <button type="button" id="guardarVentaBtn" class="btn-primary small">Guardar venta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-bodega" class="content-panel hidden">
+                    <div class="panel">
+                        <h3>Bóveda</h3>
+                        <div class="button-row" style="margin-bottom: 12px;">
+                            <button type="button" id="addExtraBodegaBtn" class="btn-secondary small">Agregar producto</button>
+                            <button type="button" id="removeBodegaBtn" class="btn-clear small">Quitar producto</button>
+                            <button type="button" id="clearBodegaBtn" class="btn-clear small">Borrar productos de boveda</button>
+                        </div>
+                        <div id="bodegaResumen" class="bodega-box"></div>
+                    </div>
+                </section>
+
+                <section id="panel-fiados" class="content-panel hidden">
+                    <div class="panel">
+                        <h3>Fiados</h3>
+                        <ul id="fiadosList" class="fiados-list"></ul>
+                    </div>
+                </section>
+
+                <section id="panel-promociones" class="content-panel hidden">
+                    <div class="panel">
+                        <h3>Promociones</h3>
+                        <form id="promoForm" class="promo-form">
+                            <select id="promoProductSelect" class="promo-input"></select>
+                            <select id="promoTypeSelect" class="promo-input">
+                                <option value="promo">Promoción</option>
+                                <option value="perdido">Producto perdido</option>
+                            </select>
+                            <input id="promoQuantityInput" class="promo-input" type="number" min="1" value="1" placeholder="Cantidad">
+                            <button type="submit" class="btn-secondary small">Aplicar</button>
+                        </form>
+                        <ul id="promotionsList" class="promotions-list"></ul>
+                    </div>
+                </section>
+
+                <section id="panel-pedidos" class="content-panel hidden">
+                    <div class="panel pedidos-panel">
+                        <div class="pedidos-header-row">
+                            <div>
+                                <h3>Pedidos</h3>
+                                <p class="pedidos-subtitle">Seguimiento de entregas y recordatorios.</p>
+                            </div>
+                            <button id="pedidoPermissionBtn" type="button" class="btn-secondary small">Permitir notificaciones</button>
+                        </div>
+
+                        <form id="pedidoForm" class="pedido-form">
+                            <div class="pedido-form-grid">
+                                <label>
+                                    ¿Quién está pendiente?
+                                    <input id="pedidoClienteInput" type="text" placeholder="Nombre de la persona" required>
+                                </label>
+                                <label>
+                                    ¿Para qué hora lo llevan?
+                                    <input id="pedidoHoraInput" type="time" required>
+                                </label>
+                                <label class="pedido-textarea-field">
+                                    Detalles del pedido
+                                    <textarea id="pedidoDetalleInput" rows="3" placeholder="Ej: 2 botellones, 1 preparada, entrega a domicilio"></textarea>
+                                </label>
+                            </div>
+                            <div class="button-row">
+                                <button type="submit" class="btn-primary small">Guardar pedido</button>
+                            </div>
+                        </form>
+
+                        <div class="pedidos-toolbar">
+                            <select id="pedidoFilterSelect" class="promo-input">
+                                <option value="pendientes">Pendientes</option>
+                                <option value="entregadas">Entregadas</option>
+                                <option value="todas">Todas</option>
+                            </select>
+                        </div>
+
+                        <div id="pedidosList" class="pedidos-list"></div>
+                    </div>
+                </section>
+
+                <section id="panel-admin" class="content-panel hidden">
+                    <div class="panel admin-panel">
+                        <div class="admin-layout">
+                            <aside class="admin-menu">
+                                <button type="button" class="admin-menu-btn active" data-admin-view="usuarios">Total usuarios</button>
+                                <button type="button" class="admin-menu-btn" data-admin-view="agregar">Añadir usuario</button>
+                                <button type="button" class="admin-menu-btn" data-admin-view="editar">Editar usuario</button>
+                                <button type="button" class="admin-menu-btn" data-admin-view="borrar">Eliminar usuario</button>
+                                <button type="button" class="admin-menu-btn" data-admin-view="actividad">Actividad de usuarios</button>
+                                <button type="button" class="admin-menu-btn logout" id="adminLogoutBtn">Guardar y cerrar</button>
+                            </aside>
+
+                            <div class="admin-view-panel">
+                                <section id="admin-view-usuarios" class="admin-view active">
+                                    <div class="section-head">
+                                        <span class="eyebrow">Administración</span>
+                                        <h3>Total usuarios</h3>
+                                    </div>
+                                    <div id="adminUsersList" class="admin-users-list"></div>
+                                </section>
+
+                                <section id="admin-view-agregar" class="admin-view hidden">
+                                    <div class="section-head">
+                                        <span class="eyebrow">Agregar</span>
+                                        <h3>Añadir usuario</h3>
+                                    </div>
+                                    <form id="adminCreateUserForm" class="modern-form admin-create-form">
+                                        <label>
+                                            <span>Usuario</span>
+                                            <input id="adminNewUsername" type="text" placeholder="Nombre de usuario" aria-label="Usuario nuevo">
+                                        </label>
+                                        <label>
+                                            <span>Contraseña</span>
+                                            <input id="adminNewPassword" type="password" placeholder="Contraseña" aria-label="Contraseña nueva">
+                                        </label>
+                                        <button type="submit" class="btn-primary small">Guardar usuario</button>
+                                    </form>
+                                </section>
+
+                                <section id="admin-view-borrar" class="admin-view hidden">
+                                    <div class="section-head">
+                                        <span class="eyebrow">Eliminar</span>
+                                        <h3>Eliminar usuario</h3>
+                                    </div>
+                                    <div id="adminDeleteList" class="admin-delete-list"></div>
+                                </section>
+
+                                <section id="admin-view-actividad" class="admin-view hidden">
+                                    <div class="section-head">
+                                        <span class="eyebrow">Actividad</span>
+                                        <h3>Última actividad de usuarios</h3>
+                                    </div>
+                                    <div id="adminActivityList" class="admin-activity-list"></div>
+                                </section>
+
+                                <section id="admin-view-editar" class="admin-view hidden">
+                                    <div class="section-head">
+                                        <span class="eyebrow">Editar</span>
+                                        <h3>Editar usuario</h3>
+                                    </div>
+                                    <form id="adminEditUserForm" class="modern-form admin-edit-form">
+                                        <label>
+                                            <span>Usuario</span>
+                                            <select id="adminEditUserSelect"></select>
+                                        </label>
+                                        <label>
+                                            <span>Nuevo nombre</span>
+                                            <input id="adminEditUsername" type="text" placeholder="Nuevo nombre">
+                                        </label>
+                                        <label>
+                                            <span>Nueva contraseña</span>
+                                            <input id="adminEditPassword" type="password" placeholder="Nueva contraseña">
+                                        </label>
+                                        <button type="submit" class="btn-primary small">Guardar cambios</button>
+                                    </form>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
